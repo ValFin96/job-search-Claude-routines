@@ -1,0 +1,8 @@
+name = "telegram-job-bot"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+TELEGRAM_CHAT_ID = "***REDACTED-CHAT-ID***"
+# ROUTINE_TRIGGER_ID, ROUTINE_API_TOKEN, and TELEGRAM_BOT_TOKEN
+# are set as secrets via: wrangler secret put SECRET_NAME
