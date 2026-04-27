@@ -19,7 +19,24 @@ Claude must pull from CONFIRMED figures first. If using a PLACEHOLDER, it must b
 ### Fivestones (Aug 2021 – Aug 2025)
 - Identified and resolved technical platform issues across Google Marketing Platform that unblocked $100k+ in media spend for agency clients
 - Delivered QBRs and platform enablement sessions across agency client base
-- Drove measurable improvement in platform adoption and utilisation (DO NOT quote 30% — cannot be verified; use softened language only)
+- Drove measurable improvement in platform adoption and utilisation (DO NOT quote 30% -- cannot be verified; use softened language only)
+- Scaled client QBRs across 100+ small to mid-sized accounts using AI-assisted workflows
+- Trained Gemini Gems on internal knowledge bases, reducing average SLA response times from 1-2 business days to approximately half
+- Delivered 100+ technical training sessions helping clients and agency partners adopt complex marketing technology platforms
+
+### Experian -- AI-specific framing (Aug 2025 – Present)
+- Reduced proposal turnaround times by approximately 40% using Microsoft Copilot
+- Runs internal knowledge-sharing sessions on practical AI workflow improvements
+
+### WorkQC Group (Sep 2023 – Jan 2026)
+- Built n8n automations for Meta Ads posting, organic content scheduling and campaign workflow management
+- Designed trend-monitoring workflows scraping industry feeds
+- Implemented AI chatbot workflows for client communication and lead handling
+
+### Independent AI Projects
+- Built automated job scoring system using n8n, web scraping and Telegram integrations
+- Created AI-assisted email summarisation workflows
+- Developed content automation systems using LLM tools
 
 ### Monash University Bootcamp (Digital Marketing Instructor)
 - Taught approximately 40 students per cohort
