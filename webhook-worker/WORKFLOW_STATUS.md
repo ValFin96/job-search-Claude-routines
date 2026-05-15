@@ -1,6 +1,22 @@
 # Telegram → Routine Workflow — Status & Debug Log
 
-Last updated: 2026-05-16 — **STATUS: WORKING** (end-to-end test passed)
+Last updated: 2026-05-16 — **PIPELINE WORKING; routine blocked by GitHub auth**
+
+> **ROOT CAUSE OF "no job list" FOUND (2026-05-16):** A real two-track search
+> fired through the pipeline returned, via Telegram:
+> `Something went wrong: {"error":{"message":"GitHub repository access check
+> failed — re-authorize GitHub in settings","reason":"github_repo_access_denied",
+> "type":"invalid_request_error"}}`
+>
+> Meaning: the Telegram→Worker→routine pipeline is **fully working** (the error
+> was relayed end to end exactly as designed). The "Job Application Generator"
+> routine itself **cannot access the private GitHub repo** it runs against, so
+> it aborts before searching any job board or writing any report. This is the
+> actual reason no scans were ever saved and no job list ever came back —
+> upstream of the reports-persistence gap.
+>
+> **FIX (user action, cannot be done from CLI):** Re-authorize GitHub for the
+> routine. See "GitHub access remediation" below.
 
 This file tracks the health of the Telegram-bot → Cloudflare-Worker → Claude-routine
 pipeline, the issues found, and their fix status. **No secret values are stored here**
@@ -41,6 +57,39 @@ Required Cloudflare secrets: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`,
   repo further limits exposure.
 - That commit is already on `origin/main`; history rewrite is **optional**, not required.
 - Pending uncommitted changes only *remove* secrets from tracked files → safe to push.
+
+## GitHub access remediation (do this to unblock the routine)
+
+The routine runs against the **private** repo `ValFin96/job-search-Claude-routines`.
+`github_repo_access_denied` means the Claude GitHub connection no longer has
+access to it. To fix:
+
+1. **claude.ai/code → Settings → GitHub / connections**: reconnect / re-authorize
+   GitHub for the "Job Application Generator" routine.
+2. **GitHub App scope**: github.com → Settings → Applications → Installed GitHub
+   Apps → the Claude/Anthropic app → Configure → ensure repository access
+   includes `job-search-Claude-routines` (private repos must be explicitly
+   selected, not "all" by default).
+3. Re-run the test (fire any message at the bot). Success = a job list or a
+   clean "no new roles" reply instead of the access error.
+
+## Reports-persistence gap (still real — fix after GitHub access is restored)
+
+Even once GitHub access works, these structural issues remain:
+
+- `reports/marketing-manager` and `reports/ai-adoption` are **not tracked in git**
+  (git cannot track empty dirs; there are no `.gitkeep` files). A fresh clone of
+  the repo will not contain these folders at all.
+- `.gitignore` line 9 `reports/**/*.json` means report JSON can **never** be
+  committed/pushed back, so scans cannot persist across routine runs via the repo.
+- Consequence: the AI-adoption track's "skip if reported in the last 14 days"
+  dedup has no baseline to read; the marketing track relies on Google Sheets
+  (external) instead, per `job_criteria.md`.
+- Recommended: add `.gitkeep` to both report dirs; decide a persistence model
+  (commit reports back to the repo with a relaxed gitignore, OR use Google
+  Sheets for both tracks); confirm the routine's prompt has explicit
+  "write report" + "read last report for dedup" steps (that config is remote,
+  on claude.ai/code/scheduled, not in this repo).
 
 ## Redundancy / cleanup notes
 
