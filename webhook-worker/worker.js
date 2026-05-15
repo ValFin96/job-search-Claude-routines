@@ -23,6 +23,16 @@ export default {
         return new Response("Ignored", { status: 200 });
       }
 
+      // Acknowledge receipt immediately so Val knows it's working
+      await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: env.TELEGRAM_CHAT_ID,
+          text: "Got it, working on it... (1-2 min)"
+        })
+      });
+
       // Fire the Claude routine with Val's message
       const fireResponse = await fetch(
         `https://api.anthropic.com/v1/claude_code/routines/${env.ROUTINE_TRIGGER_ID}/fire`,
@@ -42,13 +52,13 @@ export default {
         const err = await fireResponse.text();
         console.error("Routine fire failed:", err);
 
-        // Send error notification to Telegram
+        // Send error details to Telegram so Val can see what went wrong
         await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             chat_id: env.TELEGRAM_CHAT_ID,
-            text: "Failed to process your message. Try again in a moment."
+            text: `Something went wrong: ${err.substring(0, 200)}`
           })
         });
       }
