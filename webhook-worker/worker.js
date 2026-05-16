@@ -29,7 +29,7 @@ export default {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           chat_id: env.TELEGRAM_CHAT_ID,
-          text: "Got it, working on it... (1-2 min)"
+          text: "Got it — running your job search now. A full two-track scan usually takes several minutes (sometimes 10-15+). I'll post the results here as soon as they're ready — no need to resend."
         })
       });
 
