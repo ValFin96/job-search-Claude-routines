@@ -1,7 +1,7 @@
-# Job Search Criteria
+# Job Search Criteria — Marketing Manager
 
-This file defines exactly what jobs to find, keep, and reject.
-The n8n workflow uses this to filter listings before scoring.
+This file defines exactly what jobs to find, keep, and reject for the marketing track.
+The job scanner uses this to filter Adzuna listings before scoring.
 
 ---
 
