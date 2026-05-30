@@ -18,13 +18,13 @@ wrangler login
 ```bash
 cd webhook-worker
 wrangler secret put ROUTINE_TRIGGER_ID
-# Paste: ***REDACTED-TRIGGER-ID***
+# Paste your routine trigger ID (from claude.ai/code/scheduled)
 
 wrangler secret put ROUTINE_API_TOKEN
 # Paste: the token you generate in step 4
 
 wrangler secret put TELEGRAM_BOT_TOKEN
-# Paste: ***REDACTED-TELEGRAM-BOT-TOKEN***
+# Paste your Telegram bot token (from @BotFather)
 ```
 
 ### 4. Generate the routine API token
@@ -45,7 +45,7 @@ It will print a URL like: `https://telegram-job-bot.YOUR-SUBDOMAIN.workers.dev`
 ### 6. Set Telegram webhook
 Replace YOUR_WORKER_URL with the URL from step 5:
 ```bash
-curl "https://api.telegram.org/bot***REDACTED-TELEGRAM-BOT-TOKEN***/setWebhook?url=YOUR_WORKER_URL"
+curl "https://api.telegram.org/botYOUR_BOT_TOKEN/setWebhook?url=YOUR_WORKER_URL"
 ```
 
 ### Done. Test it:

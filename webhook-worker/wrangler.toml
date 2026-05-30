@@ -1,8 +1,21 @@
 name = "telegram-job-bot"
 main = "worker.js"
 compatibility_date = "2024-01-01"
+workers_dev = true
 
 [vars]
-TELEGRAM_CHAT_ID = "***REDACTED-CHAT-ID***"
-# ROUTINE_TRIGGER_ID, ROUTINE_API_TOKEN, and TELEGRAM_BOT_TOKEN
-# are set as secrets via: wrangler secret put SECRET_NAME
+# All sensitive values are set as Cloudflare secrets via: wrangler secret put SECRET_NAME
+# Telegram send path:  TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, PROXY_TOKEN
+# Weekly job scan:     ADZUNA_APP_ID, ADZUNA_APP_KEY, ANTHROPIC_API_KEY
+# Optional:            SCORING_MODEL (defaults to claude-haiku-4-5)
+
+# Persisted "already-seen" job IDs so each weekly run only surfaces new jobs.
+# Create once:  wrangler kv namespace create SEEN_JOBS
+# then paste the printed id below.
+[[kv_namespaces]]
+binding = "SEEN_JOBS"
+id = "066750ee8b6d4e3d9c215debdb08efbb"
+
+# Weekly run. Cron is UTC: Sun 22:00 UTC ≈ Mon 08:00 AEST / 09:00 AEDT (Sydney).
+[triggers]
+crons = ["0 22 * * SUN"]
