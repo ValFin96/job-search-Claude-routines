@@ -18,7 +18,33 @@ Last updated: 2026-05-16 — **PIPELINE WORKING; routine blocked by GitHub auth*
 > **FIX (user action, cannot be done from CLI):** Re-authorize GitHub for the
 > routine. See "GitHub access remediation" below.
 
-This file tracks the health of the Telegram-bot → Cloudflare-Worker → Claude-routine
+## ARCHITECTURE CHANGE — 2026-05-17 (supersedes the worker pipeline)
+
+The recurring "ack then silence" had a deeper root cause: the routine ran on a
+**different Claude account** (invisible/unmanageable from this CLI), and the
+Cloudflare worker is *fire-and-forget* — it only relays a non-200 from `/fire`,
+so any failure *after* the routine accepts the job never reached Telegram.
+
+**New design:** the routine was recreated on Val's **own** Claude account via the
+`schedule` skill and now runs on a **weekly cron** (Mon 09:00 Sydney). It clones
+the **public** repo (no GitHub auth needed), runs both tracks, and **self-sends**
+results to Telegram (token/chat id live in the account-private routine prompt,
+never committed). Its prompt has a hard rule: **always send a final Telegram
+message even on zero results or error** — this structurally removes the
+silent-failure class. Routine IDs/config: private memory + manage at
+https://claude.ai/code/routines .
+
+**Consequences / loose ends:**
+- The **Cloudflare worker is now deprecated** for the scheduled flow. It still
+  points at the OLD routine on the OLD account, so messaging the bot fires the
+  dead path. Retire the worker, or disable the old routine on the old account.
+- `github_repo_access_denied` no longer applies (public repo + own account).
+- Google Sheets logging (marketing track) is Phase 2: connect the Sheets MCP
+  connector at claude.ai/customize/connectors, then re-run `schedule` and
+  `update` the routine with `mcp_connections` + a Sheets-logging step.
+- The reports-persistence gap below is unchanged (still relevant for dedup).
+
+This file tracks the health of the (now legacy) Telegram-bot → Cloudflare-Worker → Claude-routine
 pipeline, the issues found, and their fix status. **No secret values are stored here**
 (secrets live only in `.env`, which is gitignored, and in Cloudflare as secrets).
 
